@@ -225,6 +225,10 @@
     </div>
     <p id="resultText"></p>
   </div>
+
+  <p style="text-align:center; margin-top:20px;">
+    <button id="changeKeyBtn" style="background:none; border:none; color:var(--muted); font-size:12px; text-decoration:underline; cursor:pointer;">Ganti API Key</button>
+  </p>
 </div>
 
 <script>
@@ -261,7 +265,11 @@ HANYA balas dengan prompt akhirnya, tanpa tanda kutip, tanpa penjelasan, tanpa m
 Catatan tambahan dari user (boleh kosong): `
   };
 
-  const API_KEY = "AQ.Ab8RN6Jpql2cYIUpaKFWdLqBcLtyovuvp5u-0N2jKq11tJicEg";
+  let API_KEY = localStorage.getItem("kyzz_api_key") || "";
+  if (!API_KEY) {
+    API_KEY = prompt("Masukin Gemini API key kamu (cuma sekali, disimpan aman di HP ini aja):") || "";
+    if (API_KEY) localStorage.setItem("kyzz_api_key", API_KEY.trim());
+  }
   const MODELS = ["gemini-3.5-flash-lite", "gemini-3.6-flash", "gemini-3.5-flash"];
 
   let mode = "generate";
@@ -431,6 +439,14 @@ Catatan tambahan dari user (boleh kosong): `
     navigator.clipboard.writeText(resultText.textContent);
     copyBtn.textContent = "✅ Disalin";
     setTimeout(() => (copyBtn.textContent = "📋 Salin"), 1500);
+  };
+
+  document.getElementById("changeKeyBtn").onclick = () => {
+    const newKey = prompt("Masukin API key baru:");
+    if (newKey && newKey.trim()) {
+      localStorage.setItem("kyzz_api_key", newKey.trim());
+      location.reload();
+    }
   };
 </script>
 </body>
