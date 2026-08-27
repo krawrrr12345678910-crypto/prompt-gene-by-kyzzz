@@ -198,16 +198,20 @@
   </div>
 
   <div id="swapUpload" class="hidden">
-    <div class="upload-row">
-      <label class="upload-box" id="faceBox">
-        <input type="file" id="faceFile" accept="image/*">
-        <span class="icon">🙂</span>
-        <span class="label">Foto Wajah Kamu</span>
+    <p style="font-size:12px; color:var(--muted); margin:0 0 6px;">Foto Wajah (bisa lebih dari 1 kalau referensinya rame)</p>
+    <div class="upload-row" id="faceRow" style="flex-wrap:wrap;">
+      <label class="upload-box" id="addFaceBox" style="flex:0 0 90px; min-height:90px;">
+        <input type="file" id="faceFileInput" accept="image/*">
+        <span class="icon">➕</span>
+        <span class="label">Tambah Wajah</span>
       </label>
+    </div>
+    <p style="font-size:12px; color:var(--muted); margin:14px 0 6px;">Foto Referensi (pose/gaya/komposisi)</p>
+    <div class="upload-row">
       <label class="upload-box" id="refBox">
         <input type="file" id="refFile" accept="image/*">
         <span class="icon">🎯</span>
-        <span class="label">Foto Referensi Pose</span>
+        <span class="label">Foto Referensi</span>
       </label>
     </div>
   </div>
@@ -252,13 +256,14 @@ Tulis sebagai satu paragraf panjang yang mengalir (bukan bullet list), bahasa In
 HANYA balas dengan prompt akhirnya, tanpa tanda kutip, tanpa penjelasan, tanpa markdown.
 
 Input mentah dari user: `,
-    swap: `Kamu adalah expert prompt engineer untuk Gemini image editing (Nano Banana), khusus untuk task menggabungkan dua foto: foto wajah asli seseorang (Gambar 1) dan foto referensi pose/gaya/outfit/background (Gambar 2).
-Tugasmu: lihat kedua gambar yang diberikan, lalu tulis SATU prompt yang SANGAT PANJANG dan detail untuk Gemini image editing, yang menginstruksikan:
-1) Gunakan wajah PERSIS dari Gambar 1 (deskripsikan ciri wajahnya secara detail: bentuk wajah, mata, hidung, bibir, warna kulit, rambut) — wajah ini TIDAK BOLEH diubah sama sekali.
-2) Terapkan pose, komposisi, gaya berpakaian/outfit, warna, lighting, background, dan atmosfer PERSIS seperti di Gambar 2 (deskripsikan secara sangat detail semua elemen visual di Gambar 2: pose badan, sudut kamera, pakaian, warna, pencahayaan, background, mood).
+    swap: `Kamu adalah expert prompt engineer untuk Gemini image editing (Nano Banana), khusus untuk task menggabungkan beberapa foto wajah orang dengan satu foto referensi pose/gaya/outfit/background.
+Gambar yang kamu terima: beberapa gambar PERTAMA adalah foto wajah orang-orang yang wajahnya harus dipakai (urutkan sebagai Orang 1, Orang 2, dst sesuai urutan gambar), dan gambar TERAKHIR adalah foto referensi yang menunjukkan pose/komposisi/gaya/outfit/background yang jadi acuan (kalau di foto referensi ada beberapa orang, setiap orang di referensi harus dipetakan ke satu wajah dari Orang 1, Orang 2, dst sesuai urutan posisi mereka di foto).
+Tugasmu: lihat semua gambar yang diberikan, lalu tulis SATU prompt yang SANGAT PANJANG dan detail untuk Gemini image editing, yang menginstruksikan:
+1) Untuk SETIAP orang: gunakan wajah PERSIS dari foto wajah masing-masing (deskripsikan ciri wajahnya secara detail: bentuk wajah, mata, hidung, bibir, warna kulit, rambut) — wajah ini TIDAK BOLEH diubah sama sekali, dan jelaskan dia menempati posisi mana di komposisi (kiri/kanan/tengah/belakang, dst sesuai referensi).
+2) Terapkan pose, komposisi, gaya berpakaian/outfit, warna, lighting, background, dan atmosfer PERSIS seperti di foto referensi (deskripsikan secara sangat detail semua elemen visual di foto referensi: pose masing-masing orang, sudut kamera, pakaian, warna, pencahayaan, background, mood).
 3) Jika ada catatan tambahan dari user, sisipkan sebagai penyesuaian di atas dasar tersebut.
-STRUKTUR WAJIB: kalimat PERTAMA dan KEDUA prompt hasil harus menegaskan wajah dari Gambar 1 dipertahankan 100% tanpa perubahan. Baru setelah itu deskripsikan pose/gaya dari Gambar 2 secara sangat rinci. Ulangi lagi penegasan menjaga wajah di TENGAH dan AKHIR prompt.
-ATURAN PANJANG (WAJIB): hasil akhir minimal 250 kata, idealnya 400-600+ kata, sangat detail dan tidak generik. Deskripsikan semua yang kamu lihat di kedua gambar secermat mungkin.
+STRUKTUR WAJIB: kalimat PERTAMA dan KEDUA prompt hasil harus menegaskan bahwa SETIAP wajah orang dipertahankan 100% tanpa perubahan sesuai foto wajah masing-masing. Baru setelah itu deskripsikan pose/gaya dari foto referensi secara sangat rinci per orang. Ulangi lagi penegasan menjaga semua wajah di TENGAH dan AKHIR prompt.
+ATURAN PANJANG (WAJIB): hasil akhir minimal 250 kata, idealnya 400-700+ kata (makin banyak orang, makin panjang), sangat detail dan tidak generik. Deskripsikan semua yang kamu lihat di semua gambar secermat mungkin.
 Tulis sebagai satu paragraf panjang yang mengalir (bukan bullet list), bahasa Inggris, siap copy-paste ke Gemini image editing.
 HANYA balas dengan prompt akhirnya, tanpa tanda kutip, tanpa penjelasan, tanpa markdown.
 
@@ -273,15 +278,16 @@ Catatan tambahan dari user (boleh kosong): `
   const MODELS = ["gemini-3.5-flash-lite", "gemini-3.6-flash", "gemini-3.5-flash"];
 
   let mode = "generate";
-  let faceImageB64 = null;
+  let faceImages = []; // array of base64
   let refImageB64 = null;
   const tabGenerate = document.getElementById("tab-generate");
   const tabEdit = document.getElementById("tab-edit");
   const tabSwap = document.getElementById("tab-swap");
   const swapUpload = document.getElementById("swapUpload");
-  const faceBox = document.getElementById("faceBox");
+  const faceRow = document.getElementById("faceRow");
+  const addFaceBox = document.getElementById("addFaceBox");
+  const faceFileInput = document.getElementById("faceFileInput");
   const refBox = document.getElementById("refBox");
-  const faceFile = document.getElementById("faceFile");
   const refFile = document.getElementById("refFile");
   const input = document.getElementById("input");
   const runBtn = document.getElementById("runBtn");
@@ -299,7 +305,34 @@ Catatan tambahan dari user (boleh kosong): `
     });
   }
 
-  function setupUploadBox(box, fileInput, onLoaded) {
+  faceFileInput.addEventListener("change", async () => {
+    const file = faceFileInput.files[0];
+    if (!file) return;
+    const b64 = await fileToBase64(file);
+    faceImages.push(b64);
+
+    const thumb = document.createElement("div");
+    thumb.className = "upload-box filled";
+    thumb.style.flex = "0 0 90px";
+    thumb.style.minHeight = "90px";
+    const img = document.createElement("img");
+    img.style.height = "90px";
+    img.src = "data:" + file.type + ";base64," + b64;
+    thumb.appendChild(img);
+    const removeBtn = document.createElement("div");
+    removeBtn.className = "remove";
+    removeBtn.textContent = "✕";
+    const idx = faceImages.length - 1;
+    removeBtn.onclick = () => {
+      faceImages[idx] = null;
+      thumb.remove();
+    };
+    thumb.appendChild(removeBtn);
+    faceRow.insertBefore(thumb, addFaceBox);
+    faceFileInput.value = "";
+  });
+
+  function setupSingleUploadBox(box, fileInput, onLoaded) {
     fileInput.addEventListener("change", async () => {
       const file = fileInput.files[0];
       if (!file) return;
@@ -324,8 +357,7 @@ Catatan tambahan dari user (boleh kosong): `
     });
   }
 
-  setupUploadBox(faceBox, faceFile, (b64) => { faceImageB64 = b64; });
-  setupUploadBox(refBox, refFile, (b64) => { refImageB64 = b64; });
+  setupSingleUploadBox(refBox, refFile, (b64) => { refImageB64 = b64; });
 
   tabGenerate.onclick = () => {
     mode = "generate";
@@ -395,9 +427,10 @@ Catatan tambahan dari user (boleh kosong): `
 
   runBtn.onclick = async () => {
     const val = input.value.trim();
+    const faces = faceImages.filter(Boolean);
     if (mode === "swap") {
-      if (!faceImageB64 || !refImageB64) {
-        errorMsg.textContent = "Upload dulu foto wajah & foto referensi.";
+      if (faces.length === 0 || !refImageB64) {
+        errorMsg.textContent = "Upload minimal 1 foto wajah & 1 foto referensi.";
         errorMsg.classList.remove("hidden");
         return;
       }
@@ -408,7 +441,7 @@ Catatan tambahan dari user (boleh kosong): `
     errorMsg.classList.add("hidden");
     resultBox.classList.add("hidden");
 
-    const images = mode === "swap" ? [faceImageB64, refImageB64] : null;
+    const images = mode === "swap" ? [...faces, refImageB64] : null;
 
     let errors = [];
     for (let i = 0; i < MODELS.length; i++) {
@@ -451,3 +484,4 @@ Catatan tambahan dari user (boleh kosong): `
 </script>
 </body>
 </html>
+
