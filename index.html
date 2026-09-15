@@ -195,6 +195,22 @@
     <button class="tab active" id="tab-generate">🖼️ Bikin Foto</button>
     <button class="tab" id="tab-edit">✏️ Edit Foto</button>
     <button class="tab" id="tab-swap">🔄 Gabung Foto</button>
+    <button class="tab" id="tab-outfit">👕 Ganti Outfit</button>
+  </div>
+
+  <div id="outfitUpload" class="hidden">
+    <div class="upload-row">
+      <label class="upload-box" id="outfitPersonBox">
+        <input type="file" id="outfitPersonFile" accept="image/*">
+        <span class="icon">🙋</span>
+        <span class="label">Foto Orang (outfit lama)</span>
+      </label>
+      <label class="upload-box" id="outfitClothBox">
+        <input type="file" id="outfitClothFile" accept="image/*">
+        <span class="icon">👕</span>
+        <span class="label">Foto Outfit Baru</span>
+      </label>
+    </div>
   </div>
 
   <div id="swapUpload" class="hidden">
@@ -248,10 +264,9 @@ HANYA balas dengan prompt akhirnya, tanpa tanda kutip, tanpa penjelasan, tanpa m
 Input mentah dari user: `,
     edit: `Kamu adalah expert prompt engineer untuk Gemini image editing (Nano Banana edit mode).
 Ubah input mentah user jadi SATU prompt yang SANGAT PANJANG, kaya detail, dan siap pakai untuk MENGEDIT foto yang sudah ada.
-STRUKTUR WAJIB (URUTAN INI HARUS DIIKUTI): kalimat PERTAMA dan KEDUA di prompt hasil harus berupa penegasan menjaga wajah, sebelum instruksi edit lain disebutkan. Contoh kalimat pembuka (kembangkan, jangan disalin persis): "Keep the exact same face as the original photo — do not change, regenerate, or reinterpret any facial features, bone structure, skin tone, eye shape, nose, lips, or expression. The face must remain 100% identical and recognizable as the same person." Baru setelah itu lanjutkan ke instruksi edit lainnya.
+STRUKTUR WAJIB: kalimat PERTAMA prompt hasil harus berupa penegasan menjaga wajah (contoh, kembangkan sendiri: "Keep the exact same face as the original photo — do not change any facial features, bone structure, skin tone, or expression"), baru lanjut ke instruksi edit lainnya. Di kalimat TERAKHIR, tegaskan lagi sekali dengan variasi kalimat berbeda bahwa wajah harus tetap identik dengan foto asli.
 ATURAN PANJANG (WAJIB, HITUNG DENGAN TELITI): hasil akhirmu harus MINIMAL 2X jumlah kata input user. Kalau input 700 kata, hasilmu wajib 1400+ kata. Kalau input pendek, hasilmu tetap harus panjang maksimal (mendekati 10.000 kata). Caranya: pecah SETIAP instruksi di input jadi beberapa kalimat detail (bukan cuma 1 kalimat per instruksi) — jelaskan teknik editing, transisi, konsistensi cahaya/warna, dsb secara rinci. JANGAN pernah meringkas, memadatkan, atau menghilangkan detail dari input. Sebelum menjawab, pastikan panjangnya sudah jauh melebihi input.
-Wajib cakup semua ini secara detail: apa yang diubah secara spesifik (langkah demi langkah kalau perlu), gaya/kualitas hasil akhir yang diinginkan, lighting/warna kalau berubah, level detail yang diinginkan.
-SANGAT PENTING — selain di kalimat pembuka, ulangi LAGI penegasan menjaga wajah di TENGAH dan di AKHIR prompt (repetisi meningkatkan kepatuhan model image editing). Tegaskan juga pose asli, proporsi tubuh, dan elemen lain yang tidak disebut untuk diubah harus tetap sama. Gunakan variasi kalimat tegas seperti "preserve the original face with zero alterations", "identity and facial structure must stay completely unchanged", "do not generate a new face — only apply the following edits while the face remains pixel-consistent with the source image".
+Wajib cakup semua ini secara detail: apa yang diubah secara spesifik (langkah demi langkah kalau perlu), gaya/kualitas hasil akhir yang diinginkan, lighting/warna kalau berubah, level detail yang diinginkan, pose asli dan proporsi tubuh yang tetap dipertahankan.
 Tulis sebagai satu paragraf panjang yang mengalir (bukan bullet list), bahasa Inggris, siap copy-paste ke Gemini.
 HANYA balas dengan prompt akhirnya, tanpa tanda kutip, tanpa penjelasan, tanpa markdown.
 
@@ -262,8 +277,20 @@ Tugasmu: lihat semua gambar yang diberikan, lalu tulis SATU prompt yang SANGAT P
 1) Untuk SETIAP orang: gunakan wajah PERSIS dari foto wajah masing-masing (deskripsikan ciri wajahnya secara detail: bentuk wajah, mata, hidung, bibir, warna kulit, rambut) — wajah ini TIDAK BOLEH diubah sama sekali, dan jelaskan dia menempati posisi mana di komposisi (kiri/kanan/tengah/belakang, dst sesuai referensi).
 2) Terapkan pose, komposisi, gaya berpakaian/outfit, warna, lighting, background, dan atmosfer PERSIS seperti di foto referensi (deskripsikan secara sangat detail semua elemen visual di foto referensi: pose masing-masing orang, sudut kamera, pakaian, warna, pencahayaan, background, mood).
 3) Jika ada catatan tambahan dari user, sisipkan sebagai penyesuaian di atas dasar tersebut.
-STRUKTUR WAJIB: kalimat PERTAMA dan KEDUA prompt hasil harus menegaskan bahwa SETIAP wajah orang dipertahankan 100% tanpa perubahan sesuai foto wajah masing-masing. Baru setelah itu deskripsikan pose/gaya dari foto referensi secara sangat rinci per orang. Ulangi lagi penegasan menjaga semua wajah di TENGAH dan AKHIR prompt.
+STRUKTUR WAJIB: kalimat PERTAMA prompt hasil harus menegaskan bahwa SETIAP wajah orang dipertahankan 100% tanpa perubahan sesuai foto wajah masing-masing, baru lanjut deskripsikan pose/gaya dari foto referensi secara sangat rinci per orang. Di kalimat TERAKHIR, tegaskan lagi sekali dengan variasi kalimat berbeda bahwa semua wajah harus tetap identik dengan foto asli masing-masing.
 ATURAN PANJANG (WAJIB): hasil akhir minimal 250 kata, idealnya 400-700+ kata (makin banyak orang, makin panjang), sangat detail dan tidak generik. Deskripsikan semua yang kamu lihat di semua gambar secermat mungkin.
+Tulis sebagai satu paragraf panjang yang mengalir (bukan bullet list), bahasa Inggris, siap copy-paste ke Gemini image editing.
+HANYA balas dengan prompt akhirnya, tanpa tanda kutip, tanpa penjelasan, tanpa markdown.
+
+Catatan tambahan dari user (boleh kosong): `,
+    outfit: `Kamu adalah expert prompt engineer untuk Gemini image editing (Nano Banana), khusus untuk task mengganti outfit/pakaian seseorang.
+Gambar yang kamu terima: Gambar PERTAMA adalah foto orang dengan wajah dan pose aslinya (outfit di foto ini akan diganti), Gambar KEDUA adalah foto contoh outfit/pakaian baru yang ingin dipakaikan ke orang tersebut (bisa berupa foto baju di gantungan, foto orang lain pakai baju itu, atau flatlay produk).
+Tugasmu: lihat kedua gambar, lalu tulis SATU prompt yang SANGAT PANJANG dan detail untuk Gemini image editing, yang menginstruksikan:
+1) Pertahankan wajah, ekspresi, pose, bentuk tubuh, dan background dari Gambar PERTAMA persis seperti aslinya — TIDAK BOLEH berubah.
+2) Ganti HANYA pakaian/outfit yang dikenakan orang tersebut dengan outfit dari Gambar KEDUA — deskripsikan sedetail mungkin outfit tersebut: jenis pakaian, warna, motif/pattern, tekstur kain, potongan/cutting, aksesoris yang menyertainya, cara outfit itu jatuh/melekat di tubuh, kerutan kain, agar terlihat natural menyesuaikan pose orang di Gambar PERTAMA.
+3) Jika ada catatan tambahan dari user, sisipkan sebagai penyesuaian di atas dasar tersebut.
+STRUKTUR WAJIB: kalimat PERTAMA prompt hasil harus menegaskan wajah dan pose dari Gambar PERTAMA dipertahankan 100%, baru lanjut deskripsikan detail penggantian outfit secara rinci. Di kalimat TERAKHIR, tegaskan lagi sekali dengan variasi kalimat berbeda bahwa wajah tetap identik, hanya outfit yang berubah.
+ATURAN PANJANG (WAJIB): hasil akhir minimal 250 kata, idealnya 400-600+ kata, sangat detail dan tidak generik.
 Tulis sebagai satu paragraf panjang yang mengalir (bukan bullet list), bahasa Inggris, siap copy-paste ke Gemini image editing.
 HANYA balas dengan prompt akhirnya, tanpa tanda kutip, tanpa penjelasan, tanpa markdown.
 
@@ -280,10 +307,18 @@ Catatan tambahan dari user (boleh kosong): `
   let mode = "generate";
   let faceImages = []; // array of base64
   let refImageB64 = null;
+  let outfitPersonB64 = null;
+  let outfitClothB64 = null;
   const tabGenerate = document.getElementById("tab-generate");
   const tabEdit = document.getElementById("tab-edit");
   const tabSwap = document.getElementById("tab-swap");
+  const tabOutfit = document.getElementById("tab-outfit");
   const swapUpload = document.getElementById("swapUpload");
+  const outfitUpload = document.getElementById("outfitUpload");
+  const outfitPersonBox = document.getElementById("outfitPersonBox");
+  const outfitPersonFile = document.getElementById("outfitPersonFile");
+  const outfitClothBox = document.getElementById("outfitClothBox");
+  const outfitClothFile = document.getElementById("outfitClothFile");
   const faceRow = document.getElementById("faceRow");
   const addFaceBox = document.getElementById("addFaceBox");
   const faceFileInput = document.getElementById("faceFileInput");
@@ -358,130 +393,9 @@ Catatan tambahan dari user (boleh kosong): `
   }
 
   setupSingleUploadBox(refBox, refFile, (b64) => { refImageB64 = b64; });
+  setupSingleUploadBox(outfitPersonBox, outfitPersonFile, (b64) => { outfitPersonB64 = b64; });
+  setupSingleUploadBox(outfitClothBox, outfitClothFile, (b64) => { outfitClothB64 = b64; });
 
-  tabGenerate.onclick = () => {
-    mode = "generate";
-    tabGenerate.classList.add("active");
-    tabEdit.classList.remove("active");
-    tabSwap.classList.remove("active");
+  function hideAllUploads() {
     swapUpload.classList.add("hidden");
-    input.classList.remove("hidden");
-    input.placeholder = "contoh: kucing pake baju astronot";
-  };
-  tabEdit.onclick = () => {
-    mode = "edit";
-    tabEdit.classList.add("active");
-    tabGenerate.classList.remove("active");
-    tabSwap.classList.remove("active");
-    swapUpload.classList.add("hidden");
-    input.classList.remove("hidden");
-    input.placeholder = "contoh: ganti background jadi pantai, orangnya jangan berubah";
-  };
-  tabSwap.onclick = () => {
-    mode = "swap";
-    tabSwap.classList.add("active");
-    tabGenerate.classList.remove("active");
-    tabEdit.classList.remove("active");
-    swapUpload.classList.remove("hidden");
-    input.classList.remove("hidden");
-    input.placeholder = "catatan tambahan (opsional), misal: buat suasana malam hari";
-  };
-
-  async function callModel(modelName, val, images) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(API_KEY)}`;
-    const parts = [];
-    if (images && images.length) {
-      for (const img of images) {
-        parts.push({ inline_data: { mime_type: "image/jpeg", data: img } });
-      }
-    }
-    parts.push({ text: SYSTEMS[mode] + val });
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: "user",
-            parts: parts
-          }
-        ],
-        generationConfig: {
-          maxOutputTokens: 16384,
-          temperature: 0.9
-        }
-      })
-    });
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      const msg = errData?.error?.message || `HTTP ${res.status}`;
-      const err = new Error(msg);
-      err.status = res.status;
-      throw err;
-    }
-    const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text).join("\n").trim();
-    if (!text) throw new Error("empty");
-    return text;
-  }
-
-  runBtn.onclick = async () => {
-    const val = input.value.trim();
-    const faces = faceImages.filter(Boolean);
-    if (mode === "swap") {
-      if (faces.length === 0 || !refImageB64) {
-        errorMsg.textContent = "Upload minimal 1 foto wajah & 1 foto referensi.";
-        errorMsg.classList.remove("hidden");
-        return;
-      }
-    } else if (!val) {
-      return;
-    }
-    runBtn.disabled = true;
-    errorMsg.classList.add("hidden");
-    resultBox.classList.add("hidden");
-
-    const images = mode === "swap" ? [...faces, refImageB64] : null;
-
-    let errors = [];
-    for (let i = 0; i < MODELS.length; i++) {
-      const modelName = MODELS[i];
-      runBtn.textContent = i === 0 ? "Bikin prompt..." : `Coba server lain (${i + 1}/${MODELS.length})...`;
-      try {
-        const text = await callModel(modelName, val, images);
-        resultText.textContent = text;
-        resultBox.classList.remove("hidden");
-        errors = [];
-        break;
-      } catch (e) {
-        errors.push(`${modelName}: ${e.message}`);
-        continue;
-      }
-    }
-
-    if (errors.length > 0) {
-      errorMsg.textContent = "Semua server gagal:\n" + errors.join("\n");
-      errorMsg.classList.remove("hidden");
-    }
-
-    runBtn.disabled = false;
-    runBtn.textContent = "🪄 Bikin Prompt";
-  };
-
-  copyBtn.onclick = () => {
-    navigator.clipboard.writeText(resultText.textContent);
-    copyBtn.textContent = "✅ Disalin";
-    setTimeout(() => (copyBtn.textContent = "📋 Salin"), 1500);
-  };
-
-  document.getElementById("changeKeyBtn").onclick = () => {
-    const newKey = prompt("Masukin API key baru:");
-    if (newKey && newKey.trim()) {
-      localStorage.setItem("kyzz_api_key", newKey.trim());
-      location.reload();
-    }
-  };
-</script>
-</body>
-</html>
-
+    outfitUpload.classList.add("hidd
