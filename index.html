@@ -251,6 +251,15 @@
   </p>
 </div>
 
+<div id="keyModal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.75); display:flex; align-items:center; justify-content:center; padding:20px; z-index:999;">
+  <div style="background:var(--card); border:2px solid var(--border); border-radius:16px; padding:20px; max-width:360px; width:100%;">
+    <p style="margin:0 0 10px; font-weight:700; font-size:15px;">Masukin Gemini API Key</p>
+    <p style="margin:0 0 12px; font-size:12px; color:var(--muted); line-height:1.5;">Cuma sekali, disimpan aman di HP ini aja.</p>
+    <input type="text" id="keyModalInput" placeholder="AQ.xxxxxxxx" style="width:100%; background:#0e0e12; border:1px solid var(--border); border-radius:10px; padding:10px; color:var(--text); font-size:13px; outline:none; box-sizing:border-box; margin-bottom:12px;">
+    <button id="keyModalSave" style="width:100%; background:linear-gradient(135deg, #a855f7, #ec4899); color:#fff; border:none; border-radius:10px; padding:10px; font-weight:700; font-size:14px; cursor:pointer;">Simpan</button>
+  </div>
+</div>
+
 <script>
   const SYSTEMS = {
     generate: `Kamu adalah expert prompt engineer untuk Gemini image generation (Nano Banana / Imagen).
@@ -298,10 +307,6 @@ Catatan tambahan dari user (boleh kosong): `
   };
 
   let API_KEY = localStorage.getItem("kyzz_api_key") || "";
-  if (!API_KEY) {
-    API_KEY = prompt("Masukin Gemini API key kamu (cuma sekali, disimpan aman di HP ini aja):") || "";
-    if (API_KEY) localStorage.setItem("kyzz_api_key", API_KEY.trim());
-  }
   const MODELS = ["gemini-3.5-flash-lite", "gemini-3.6-flash", "gemini-3.5-flash"];
 
   let mode = "generate";
@@ -375,27 +380,4 @@ Catatan tambahan dari user (boleh kosong): `
       onLoaded(b64);
       box.classList.add("filled");
       box.innerHTML = "";
-      const img = document.createElement("img");
-      img.src = "data:" + file.type + ";base64," + b64;
-      box.appendChild(img);
-      const removeBtn = document.createElement("div");
-      removeBtn.className = "remove";
-      removeBtn.textContent = "✕";
-      removeBtn.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onLoaded(null);
-        box.classList.remove("filled");
-        box.appendChild(fileInput);
-      };
-      box.appendChild(removeBtn);
-    });
-  }
-
-  setupSingleUploadBox(refBox, refFile, (b64) => { refImageB64 = b64; });
-  setupSingleUploadBox(outfitPersonBox, outfitPersonFile, (b64) => { outfitPersonB64 = b64; });
-  setupSingleUploadBox(outfitClothBox, outfitClothFile, (b64) => { outfitClothB64 = b64; });
-
-  function hideAllUploads() {
-    swapUpload.classList.add("hidden");
-    outfitUpload.classList.add("hidd
+      const img = docum
