@@ -354,24 +354,23 @@ Catatan tambahan dari user (boleh kosong): `
     });
   }
 
-  faceFileInput.addEventListener("change", async () => {
-    const file = faceFileInput.files[0];
+  faceFileInput.addEventListener("change", function () {
+    var file = faceFileInput.files[0];
     if (!file) return;
-    const b64 = await fileToBase64(file);
-    faceImages.push(b64);
+    fileToBase64(file).then(function (b64) {
+      faceImages.push(b64);
 
-    const thumb = document.createElement("div");
-    thumb.className = "upload-box filled";
-    thumb.style.flex = "0 0 90px";
-    thumb.style.minHeight = "90px";
-    const img = document.createElement("img");
-    img.style.height = "90px";
-    img.src = "data:" + file.type + ";base64," + b64;
-    thumb.appendChild(img);
-    const removeBtn = document.createElement("div");
-    removeBtn.className = "remove";
-    removeBtn.textContent = "✕";
-    const idx = faceImages.length - 1;
-    removeBtn.onclick = () => {
-      faceImages[idx] = null;
-      thumb.re
+      var thumb = document.createElement("div");
+      thumb.className = "upload-box filled";
+      thumb.style.flex = "0 0 90px";
+      thumb.style.minHeight = "90px";
+      var img = document.createElement("img");
+      img.style.height = "90px";
+      img.src = "data:" + file.type + ";base64," + b64;
+      thumb.appendChild(img);
+      var removeBtn = document.createElement("div");
+      removeBtn.className = "remove";
+      removeBtn.textContent = "✕";
+      var idx = faceImages.length - 1;
+      removeBtn.onclick = function () {
+        faceImage
