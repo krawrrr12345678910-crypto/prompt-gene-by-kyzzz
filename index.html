@@ -251,7 +251,7 @@
   </p>
 </div>
 
-<div id="keyModal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.75); display:flex; align-items:center; justify-content:center; padding:20px; z-index:999;">
+<div id="keyModal" style="position:fixed; inset:0; background:rgba(0,0,0,0.75); display:none; align-items:center; justify-content:center; padding:20px; z-index:999;">
   <div style="background:var(--card); border:2px solid var(--border); border-radius:16px; padding:20px; max-width:360px; width:100%;">
     <p style="margin:0 0 10px; font-weight:700; font-size:15px;">Masukin Gemini API Key</p>
     <p style="margin:0 0 12px; font-size:12px; color:var(--muted); line-height:1.5;">Cuma sekali, disimpan aman di HP ini aja.</p>
@@ -373,4 +373,5 @@ Catatan tambahan dari user (boleh kosong): `
       removeBtn.textContent = "✕";
       var idx = faceImages.length - 1;
       removeBtn.onclick = function () {
-        faceImage
+        faceImages[idx] = null;
+  
